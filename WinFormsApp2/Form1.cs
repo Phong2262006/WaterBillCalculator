@@ -7,7 +7,7 @@ namespace WinFormsApp2
 {
     public partial class Form1 : Form
     {
-        // Khởi tạo bảng dữ liệu và binding source để hiển thị lên DataGridView
+        // Initialize DataTable and BindingSource to display in DataGridView
         private DataTable dt = new();
         private BindingSource bindingSource = new();
 
@@ -15,26 +15,26 @@ namespace WinFormsApp2
         {
             InitializeComponent();
 
-            // Xóa các mục có sẵn trong combobox loại khách hàng (nếu có)
+            // Clear existing items in customer type ComboBox (if any)
             cbCustomerType.Items.Clear();
 
-            // Thêm các loại khách hàng vào combobox
+            // Add customer types into ComboBox
             cbCustomerType.Items.AddRange(new object[]
-{
-    "Household",
-    "Business",
-    "Government",
-    "Other"
-});
+            {
+                "Household",
+                "Business",
+                "Government",
+                "Other"
+            });
 
-            cbCustomerType.SelectedIndex = 0; // Chọn mặc định loại đầu tiên
+            cbCustomerType.SelectedIndex = 0; // Set default selected item
 
-            SetupDataTable(); // Tạo cấu trúc bảng dữ liệu
+            SetupDataTable(); // Setup DataTable structure
 
-            bindingSource.DataSource = dt; // Gắn DataTable vào BindingSource
-            dgvCustomerList.DataSource = bindingSource; // Gắn vào DataGridView
+            bindingSource.DataSource = dt; // Bind DataTable to BindingSource
+            dgvCustomerList.DataSource = bindingSource; // Bind to DataGridView
 
-            // Gắn các sự kiện cho nút và ô nhập liệu
+            // Attach event handlers to buttons and input controls
             btnCalculate.Click += BtnCalculate_Click;
             btnClear.Click += BtnClear_Click;
             txtSearch.TextChanged += TxtSearch_TextChanged;
@@ -43,7 +43,7 @@ namespace WinFormsApp2
             btnReset.Click += btnReset_Click;
         }
 
-        // Tạo cấu trúc bảng dữ liệu với các cột tương ứng
+        // Setup DataTable structure with corresponding columns
         private void SetupDataTable()
         {
             dt.Columns.Add("Customer Name", typeof(string));
@@ -55,12 +55,12 @@ namespace WinFormsApp2
             dt.Columns.Add("Total Amount", typeof(decimal));
         }
 
-        // Xử lý khi nhấn nút "Calculate"
+        // Handle "Calculate" button click event
         private void BtnCalculate_Click(object? sender, EventArgs e)
         {
             try
             {
-                // Lấy và kiểm tra tên khách hàng
+                // Get and validate customer name
                 string customerName = txtCustomerName.Text.Trim();
                 if (string.IsNullOrWhiteSpace(customerName))
                 {
@@ -68,14 +68,14 @@ namespace WinFormsApp2
                     return;
                 }
 
-                // Kiểm tra loại khách hàng đã chọn chưa
+                // Validate customer type selection
                 if (cbCustomerType.SelectedIndex == -1 || string.IsNullOrWhiteSpace(cbCustomerType.Text))
                 {
                     MessageBox.Show("Please select a customer type!");
                     return;
                 }
 
-                // Lấy chỉ số đồng hồ tháng trước và tháng này
+                // Parse previous and current month meter readings
                 if (!decimal.TryParse(txtLastMonthMeter.Text.Trim(), out decimal lastMonth))
                 {
                     MessageBox.Show("Please enter a valid previous month meter reading!");
@@ -97,7 +97,7 @@ namespace WinFormsApp2
                 int numberOfPeople = 0;
                 string customerType = cbCustomerType.SelectedItem?.ToString() ?? "";
 
-                // Nếu là hộ gia đình, bắt buộc nhập số người
+                // For Household customer type, number of people is required and must be valid
                 if (customerType == "Household")
                 {
                     if (!int.TryParse(txtNumberOfPeople.Text.Trim(), out numberOfPeople) || numberOfPeople <= 0)
@@ -107,13 +107,13 @@ namespace WinFormsApp2
                     }
                 }
 
-                // Tính lượng nước tiêu thụ
+                // Calculate water consumption
                 decimal consumption = thisMonth - lastMonth;
                 decimal total = 0;
 
                 if (customerType == "Household")
                 {
-                    // Áp dụng bảng giá bậc thang theo số người
+                    // Apply tiered pricing based on number of people
                     decimal remaining = consumption;
 
                     decimal tier1Limit = 10 * numberOfPeople;
@@ -139,13 +139,13 @@ namespace WinFormsApp2
 
                     if (remaining > 0)
                     {
-                        // Mức trên 30 m³/người
+                        // Usage above 30 m³ per person
                         total += remaining * 17521.9m;
                     }
                 }
                 else
                 {
-                    // Đơn giá cơ bản của các loại khách hàng khác
+                    // Base price for other customer types
                     decimal basePrice = customerType switch
                     {
                         "Business" => 22068m,
@@ -154,15 +154,15 @@ namespace WinFormsApp2
                         _ => 11615m
                     };
 
-                    // Cộng thêm phí bảo vệ môi trường 10%
+                    // Add 10% environmental protection fee
                     decimal unitPriceWithEnv = basePrice * 1.10m;
                     total = consumption * unitPriceWithEnv;
                 }
 
-                // Cộng thêm VAT 10%
+                // Add 10% VAT
                 total *= 1.10m;
 
-                // Kiểm tra trùng tên khách hàng trong danh sách
+                // Check for duplicate customer names in the list
                 foreach (DataRow row in dt.Rows)
                 {
                     if (row["Customer Name"].ToString() == customerName)
@@ -172,7 +172,7 @@ namespace WinFormsApp2
                     }
                 }
 
-                // Thêm dữ liệu vào bảng
+                // Add new data row to DataTable
                 dt.Rows.Add(customerName, customerType, numberOfPeople, lastMonth, thisMonth, consumption, total);
                 MessageBox.Show("Calculation successful!");
             }
@@ -182,7 +182,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Xóa dữ liệu nhập liệu trên form
+        // Clear input fields on the form
         private void BtnClear_Click(object? sender, EventArgs e)
         {
             txtCustomerName.Clear();
@@ -192,7 +192,7 @@ namespace WinFormsApp2
             cbCustomerType.SelectedIndex = -1;
         }
 
-        // Tìm kiếm khách hàng theo tên
+        // Filter customers by name as user types in search box
         private void TxtSearch_TextChanged(object? sender, EventArgs e)
         {
             string keyword = txtSearch.Text.Trim();
@@ -206,7 +206,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Xóa toàn bộ dữ liệu và đặt lại mặc định
+        // Reset all data and inputs to default state
         private void btnReset_Click(object? sender, EventArgs e)
         {
             txtCustomerName.Text = "";
@@ -219,7 +219,7 @@ namespace WinFormsApp2
             bindingSource.ResetBindings(false);
         }
 
-        // In hóa đơn cho khách hàng đang chọn trên bảng
+        // Print invoice for currently selected customer row
         private void BtnPrintInvoice_Click(object? sender, EventArgs e)
         {
             if (dgvCustomerList.CurrentRow != null && dgvCustomerList.CurrentRow.Index >= 0)
@@ -236,7 +236,7 @@ namespace WinFormsApp2
             }
         }
 
-        // In hóa đơn cho toàn bộ khách hàng trong danh sách
+        // Print invoices for all customers in the list
         private void BtnPrintAllInvoices_Click(object? sender, EventArgs e)
         {
             foreach (DataRow row in dt.Rows)
@@ -245,7 +245,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Hàm in 1 dòng dữ liệu (1 hóa đơn)
+        // Print one invoice (one data row)
         private void PrintRow(DataRow row)
         {
             string invoice = $"--- INVOICE ---\n" +
