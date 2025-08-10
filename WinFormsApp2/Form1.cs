@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Data;
 using System.Windows.Forms;
 
@@ -7,7 +6,7 @@ namespace WinFormsApp2
 {
     public partial class Form1 : Form
     {
-        // Initialize DataTable and BindingSource to display in DataGridView
+        // Initialize the data table and binding source for displaying in DataGridView
         private DataTable dt = new();
         private BindingSource bindingSource = new();
 
@@ -15,26 +14,26 @@ namespace WinFormsApp2
         {
             InitializeComponent();
 
-            // Clear existing items in customer type ComboBox (if any)
+            // Clear any existing items in the customer type combobox
             cbCustomerType.Items.Clear();
 
-            // Add customer types into ComboBox
+            // Add customer types to the combobox
             cbCustomerType.Items.AddRange(new object[]
-            {
-                "Household",
-                "Business",
-                "Government",
-                "Other"
-            });
+{
+    "Household",
+    "Business",
+    "Government",
+    "Other"
+});
 
-            cbCustomerType.SelectedIndex = 0; // Set default selected item
+            cbCustomerType.SelectedIndex = 0; // Select the first type by default
 
-            SetupDataTable(); // Setup DataTable structure
+            SetupDataTable(); // Create the data table structure
 
             bindingSource.DataSource = dt; // Bind DataTable to BindingSource
             dgvCustomerList.DataSource = bindingSource; // Bind to DataGridView
 
-            // Attach event handlers to buttons and input controls
+            // Attach event handlers for buttons and input fields
             btnCalculate.Click += BtnCalculate_Click;
             btnClear.Click += BtnClear_Click;
             txtSearch.TextChanged += TxtSearch_TextChanged;
@@ -43,7 +42,7 @@ namespace WinFormsApp2
             btnReset.Click += btnReset_Click;
         }
 
-        // Setup DataTable structure with corresponding columns
+        // Create the data table structure with corresponding columns
         private void SetupDataTable()
         {
             dt.Columns.Add("Customer Name", typeof(string));
@@ -55,7 +54,7 @@ namespace WinFormsApp2
             dt.Columns.Add("Total Amount", typeof(decimal));
         }
 
-        // Handle "Calculate" button click event
+        // Handle the "Calculate" button click
         private void BtnCalculate_Click(object? sender, EventArgs e)
         {
             try
@@ -68,14 +67,14 @@ namespace WinFormsApp2
                     return;
                 }
 
-                // Validate customer type selection
+                // Check if a customer type is selected
                 if (cbCustomerType.SelectedIndex == -1 || string.IsNullOrWhiteSpace(cbCustomerType.Text))
                 {
                     MessageBox.Show("Please select a customer type!");
                     return;
                 }
 
-                // Parse previous and current month meter readings
+                // Get previous and current month meter readings
                 if (!decimal.TryParse(txtLastMonthMeter.Text.Trim(), out decimal lastMonth))
                 {
                     MessageBox.Show("Please enter a valid previous month meter reading!");
@@ -97,7 +96,7 @@ namespace WinFormsApp2
                 int numberOfPeople = 0;
                 string customerType = cbCustomerType.SelectedItem?.ToString() ?? "";
 
-                // For Household customer type, number of people is required and must be valid
+                // For household type, number of people is required
                 if (customerType == "Household")
                 {
                     if (!int.TryParse(txtNumberOfPeople.Text.Trim(), out numberOfPeople) || numberOfPeople <= 0)
@@ -139,7 +138,7 @@ namespace WinFormsApp2
 
                     if (remaining > 0)
                     {
-                        // Usage above 30 m³ per person
+                        // Usage above 30 m³/person
                         total += remaining * 17521.9m;
                     }
                 }
@@ -162,7 +161,7 @@ namespace WinFormsApp2
                 // Add 10% VAT
                 total *= 1.10m;
 
-                // Check for duplicate customer names in the list
+                // Check for duplicate customer name in the list
                 foreach (DataRow row in dt.Rows)
                 {
                     if (row["Customer Name"].ToString() == customerName)
@@ -172,7 +171,7 @@ namespace WinFormsApp2
                     }
                 }
 
-                // Add new data row to DataTable
+                // Add new row to the table
                 dt.Rows.Add(customerName, customerType, numberOfPeople, lastMonth, thisMonth, consumption, total);
                 MessageBox.Show("Calculation successful!");
             }
@@ -182,7 +181,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Clear input fields on the form
+        // Clear all input fields on the form
         private void BtnClear_Click(object? sender, EventArgs e)
         {
             txtCustomerName.Clear();
@@ -192,7 +191,7 @@ namespace WinFormsApp2
             cbCustomerType.SelectedIndex = -1;
         }
 
-        // Filter customers by name as user types in search box
+        // Search for customer by name
         private void TxtSearch_TextChanged(object? sender, EventArgs e)
         {
             string keyword = txtSearch.Text.Trim();
@@ -206,7 +205,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Reset all data and inputs to default state
+        // Clear all data and reset to default
         private void btnReset_Click(object? sender, EventArgs e)
         {
             txtCustomerName.Text = "";
@@ -219,7 +218,7 @@ namespace WinFormsApp2
             bindingSource.ResetBindings(false);
         }
 
-        // Print invoice for currently selected customer row
+        // Print invoice for the currently selected customer row in the table
         private void BtnPrintInvoice_Click(object? sender, EventArgs e)
         {
             if (dgvCustomerList.CurrentRow != null && dgvCustomerList.CurrentRow.Index >= 0)
@@ -245,7 +244,7 @@ namespace WinFormsApp2
             }
         }
 
-        // Print one invoice (one data row)
+        // Print one row of data (one invoice)
         private void PrintRow(DataRow row)
         {
             string invoice = $"--- INVOICE ---\n" +

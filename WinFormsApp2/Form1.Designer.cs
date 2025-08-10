@@ -126,6 +126,7 @@
             btnCalculate.Size = new Size(150, 35);
             btnCalculate.TabIndex = 10;
             btnCalculate.Text = "Calculate";
+            this.btnCalculate.Click += new System.EventHandler(this.BtnCalculate_Click);
             // 
             // btnClear
             // 
