@@ -126,7 +126,6 @@
             btnCalculate.Size = new Size(150, 35);
             btnCalculate.TabIndex = 10;
             btnCalculate.Text = "Calculate";
-            this.btnCalculate.Click += new System.EventHandler(this.BtnCalculate_Click);
             // 
             // btnClear
             // 
@@ -152,8 +151,7 @@
             grpCustomerInfo.Size = new Size(200, 100);
             grpCustomerInfo.TabIndex = 0;
             grpCustomerInfo.TabStop = false;
-            // 
-            // lblSearch
+            //// lblSearch
             // 
             lblSearch.AutoSize = true;
             lblSearch.Location = new Point(420, 338);
@@ -229,8 +227,7 @@
 
         #endregion
 
-        private Label lblCustomerName;
-        private TextBox txtCustomerName;
+        private Label lblCustomerName; private TextBox txtCustomerName;
         private Label lblCustomerType;
         private ComboBox cbCustomerType;
         private Label lblNumberOfPeople;
